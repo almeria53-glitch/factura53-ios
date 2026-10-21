@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f766e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Factura 53">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>Factura 53</title>
+<style>
+:root{--c:#0f766e;--c2:#115e59;--g:#f3f4f6;--t:#111827;--m:#6b7280;--b:#e5e7eb;--r:#b91c1c}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+html,body{margin:0;font-family:system-ui,Roboto,sans-serif;color:var(--t);background:var(--g);font-size:16px}
+header{position:sticky;top:0;z-index:5;background:var(--c);color:#fff;padding:calc(14px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 14px max(16px,env(safe-area-inset-left,0px));display:flex;align-items:center;gap:10px}
+header h1{font-size:19px;margin:0;flex:1}
+header button{background:rgba(255,255,255,.2);color:#fff;border:0;border-radius:10px;padding:8px 14px;font-size:15px}
+main{padding:14px max(14px,env(safe-area-inset-right,0px)) calc(100px + env(safe-area-inset-bottom,0px)) max(14px,env(safe-area-inset-left,0px));max-width:760px;margin:0 auto}
+nav{position:fixed;bottom:0;left:0;right:0;padding-bottom:env(safe-area-inset-bottom,0px);background:#fff;border-top:1px solid var(--b);display:flex;z-index:5}
+nav button{flex:1;border:0;background:none;padding:8px 4px 12px;font-size:12px;color:var(--m)}
+nav button span{display:block;font-size:21px}
+nav button.on{color:var(--c);font-weight:700}
+.card{background:#fff;border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 1px 2px rgba(0,0,0,.07)}
+label{display:block;font-size:13px;color:var(--m);margin:10px 0 4px}
+label:first-child{margin-top:0}
+input,select,textarea{width:100%;font-size:16px;padding:11px;border:1px solid var(--b);border-radius:10px;background:#fff;color:var(--t);font-family:inherit}
+textarea{min-height:76px}
+button.prim{width:100%;background:var(--c);color:#fff;border:0;border-radius:12px;padding:14px;font-size:17px;font-weight:600;margin:4px 0 10px}
+button.sec{background:#fff;color:var(--c);border:1px solid var(--c);border-radius:12px;padding:11px;font-size:15px;font-weight:600;flex:1}
+button.sec.peligro{color:var(--r);border-color:var(--r)}
+.fila{display:flex;gap:8px}
+.fila>div{flex:1}
+.linea{border-top:1px solid var(--b);padding:10px 0}
+.linea .fila{margin-top:8px;align-items:center}
+.del{background:none;border:0;font-size:22px;padding:4px 8px}
+.item{display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-top:1px solid var(--b)}
+.item:first-child{border-top:0}
+.item small{color:var(--m)}
+.num{text-align:right;font-weight:600;white-space:nowrap}
+.res{display:flex;gap:8px;margin-bottom:12px}
+.res div{flex:1;background:#fff;border-radius:12px;padding:10px;text-align:center;box-shadow:0 1px 2px rgba(0,0,0,.07)}
+.res small{display:block;color:var(--m);font-size:12px}
+.res b{font-size:15px}
+.tot{margin-top:10px;font-size:15px}
+.tot div{display:flex;justify-content:space-between;padding:3px 0}
+.tot .g{font-weight:700;font-size:19px;border-top:1px solid var(--b);margin-top:4px;padding-top:8px}
+.vacio{text-align:center;color:var(--m);padding:26px 10px}
+.aviso{background:#fef3c7;color:#92400e;border-radius:10px;padding:10px;font-size:14px}
+.nota{font-size:13px;color:var(--m);margin:6px 0 0}
+#hoja{background:#fff;border-radius:6px;padding:18px;box-shadow:0 1px 4px rgba(0,0,0,.15);font-size:13px;line-height:1.45}
+#hoja .hcab{display:flex;justify-content:space-between;gap:12px;margin-bottom:16px}
+#hoja .hn{font-weight:700;font-size:16px}
+#hoja .hr{text-align:right}
+#hoja .hf{font-size:22px;font-weight:800;color:var(--c);letter-spacing:1px}
+#hoja .hcli{background:#f9fafb;border-radius:8px;padding:10px;margin-bottom:14px}
+#hoja small{color:var(--m);font-size:11px;letter-spacing:.5px}
+#hoja table{width:100%;border-collapse:collapse}
+#hoja th{background:var(--c);color:#fff;text-align:left;padding:7px;font-size:12px}
+#hoja td{padding:7px;border-bottom:1px solid var(--b);vertical-align:top}
+#hoja th.d,#hoja td.d{text-align:right;white-space:nowrap}
+#hoja .htot{margin:14px 0 0 auto;width:62%;min-width:200px}
+#hoja .htot div{display:flex;justify-content:space-between;padding:3px 0}
+#hoja .htot .g{font-weight:800;font-size:16px;border-top:2px solid var(--c);margin-top:4px;padding-top:6px}
+#hoja .hpie{margin-top:20px;font-size:12px;color:#374151;white-space:pre-line}
+.chk{display:flex;align-items:center;gap:10px;font-size:16px;color:var(--t);margin:0}
+.chk input{width:22px;height:22px;flex:none}
+.codigo{font-size:22px;font-weight:700;letter-spacing:2px;text-align:center;background:#f9fafb;border:1px dashed var(--c);border-radius:10px;padding:14px 6px;margin:8px 0;word-break:break-all}
+.selloBox{text-align:right;margin-top:26px;padding-right:14px}
+.sello{display:inline-block;border:4px solid #c62828;color:#c62828;border-radius:10px;padding:4px 20px;font-family:'Courier New',monospace;font-size:30px;font-weight:900;letter-spacing:5px;transform:rotate(-9deg);opacity:.85;box-shadow:inset 0 0 0 2px #fff,inset 0 0 0 4px #c62828}
+*{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+@media print{
+  header,nav,.noprint{display:none!important}
+  body{background:#fff}
+  main{padding:0;max-width:none}
+  #hoja{box-shadow:none;border-radius:0;padding:0;font-size:12.5px}
+  @page{margin:14mm}
+}
+</style>
+</head>
+<body>
+<header class="noprint">
+  <button id="btnAtras" onclick="atras()" style="display:none">&#8592;</button>
+  <h1 id="titulo">Factura 53</h1>
+</header>
+<main>
+  <section class="vista" id="v-facturas"></section>
+  <section class="vista" id="v-form"></section>
+  <section class="vista" id="v-ver"></section>
+  <section class="vista" id="v-clientes"></section>
+  <section class="vista" id="v-cliente"></section>
+  <section class="vista" id="v-ajustes"></section>
+  <section class="vista" id="v-activar"></section>
+</main>
+<nav class="noprint" id="nav">
+  <button data-t="facturas" onclick="raiz('facturas')"><span>&#128196;</span>Facturas</button>
+  <button data-t="clientes" onclick="raiz('clientes')"><span>&#128101;</span>Clientes</button>
+  <button data-t="ajustes" onclick="raiz('ajustes')"><span>&#9881;&#65039;</span>Mis datos</button>
+</nav>
+<script>
+var K = 'facturas_v2';
+var IVA = 10;
+var D = cargar();
+var pila = ['facturas'], F = null, CF = null, VID = null;
+var titulos = {facturas:'Facturas', form:'Factura', ver:'Factura', clientes:'Clientes', cliente:'Cliente', ajustes:'Mis datos', activar:'Factura 53'};
+
+function $(id){ return document.getElementById(id); }
+function base(){ return {emisor:{nombre:'',nif:'',dir:'',email:'',tel:''}, pie:'', clientes:[], facturas:[]}; }
+function cargar(){
+  try {
+    var d = JSON.parse(localStorage.getItem(K));
+    if (d && typeof d === 'object') {
+      var b = base();
+      for (var k in b) { if (d[k] === undefined) d[k] = b[k]; }
+      return d;
+    }
+  } catch(e) {}
+  return base();
+}
+function guardar(){ try { localStorage.setItem(K, JSON.stringify(D)); } catch(e) { alert('No se pudo guardar'); } }
+function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function nl(s){ return esc(s).replace(/\n/g, '<br>'); }
+function num(s){ var n = parseFloat(String(s).replace(',', '.')); return isNaN(n) ? 0 : n; }
+function eur(n){ return new Intl.NumberFormat('es-ES', {style:'currency', currency:'EUR'}).format(n); }
+function pad(n, l){ var s = String(n); while (s.length < l) s = '0' + s; return s; }
+function hoyISO(){ var d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth()+1, 2) + '-' + pad(d.getDate(), 2); }
+function fechaES(iso){ return String(iso || '').split('-').reverse().join('/'); }
+function uid(){ return 'x' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+function copia(o){ return JSON.parse(JSON.stringify(o)); }
+
+/* El total se escribe con IVA incluido y se desglosa */
+function desglose(total){
+  var t = Math.round(num(total) * 100);
+  var b = Math.round(t / (1 + IVA / 100));
+  return {base: b / 100, iva: (t - b) / 100, total: t / 100};
+}
+function siguienteNumero(anio){
+  var max = 0;
+  D.facturas.forEach(function(f){
+    var p = String(f.numero).split('-');
+    if (p[0] === String(anio) && p.length === 2) { var n = parseInt(p[1], 10); if (n > max) max = n; }
+  });
+  return anio + '-' + pad(max + 1, 3);
+}
+function servicioTexto(f){
+  var t = 'Servicio de taxi realizado';
+  if (f.desde && f.desde.trim()) t += ' desde ' + f.desde.trim();
+  if (f.hasta && f.hasta.trim()) t += ' hasta ' + f.hasta.trim();
+  return t;
+}
+
+/* ---------- navegación ---------- */
+function ir(v){ pila.push(v); pintar(); window.scrollTo(0, 0); }
+function raiz(v){ pila = [v]; pintar(); window.scrollTo(0, 0); }
+function atras(){ if (pila.length > 1) { pila.pop(); pintar(); return true; } return false; }
+window.atras = atras;
+function activado(){ return !(window.Android && window.Android.activada) || window.Android.activada(); }
+function pintar(){
+  if (!activado()) { vistaActivar(); return; }
+  $('nav').style.display = '';
+  var v = pila[pila.length - 1];
+  var vs = document.querySelectorAll('.vista');
+  for (var i = 0; i < vs.length; i++) vs[i].style.display = 'none';
+  $('v-' + v).style.display = 'block';
+  $('titulo').textContent = titulos[v];
+  $('btnAtras').style.display = pila.length > 1 ? 'inline-block' : 'none';
+  var tab = v === 'cliente' ? 'clientes' : (v === 'form' || v === 'ver' ? 'facturas' : v);
+  var bs = document.querySelectorAll('nav button');
+  for (var j = 0; j < bs.length; j++) bs[j].classList.toggle('on', bs[j].getAttribute('data-t') === tab);
+  var fn = {facturas:rFacturas, form:rForm, ver:rVer, clientes:rClientes, cliente:rCliente, ajustes:rAjustes};
+  fn[v]();
+}
+
+/* ---------- lista de facturas ---------- */
+function rFacturas(){
+  var anio = String(new Date().getFullYear());
+  var b = 0, i = 0, t = 0;
+  D.facturas.forEach(function(f){
+    if (String(f.fecha).slice(0, 4) === anio) { var x = desglose(f.total); b += x.base; i += x.iva; t += x.total; }
+  });
+  var lista = D.facturas.slice().sort(function(a, c){
+    return (c.fecha + c.numero).localeCompare(a.fecha + a.numero);
+  });
+  var h = '<button class="prim" onclick="nuevaFactura()">+ Nueva factura</button>';
+  h += '<div class="res"><div><small>Base ' + anio + '</small><b>' + eur(b) + '</b></div>' +
+       '<div><small>IVA ' + IVA + ' %</small><b>' + eur(i) + '</b></div>' +
+       '<div><small>Total</small><b>' + eur(t) + '</b></div></div>';
+  if (!D.emisor.nombre.trim()) h += '<p class="aviso">Rellena tus datos en la pestaña «Mis datos» para que salgan en todas las facturas.</p>';
+  if (!lista.length) {
+    h += '<div class="vacio">Aún no tienes facturas.<br>Pulsa «Nueva factura» para crear la primera.</div>';
+  } else {
+    h += '<div class="card">';
+    lista.forEach(function(f){
+      var c = f.cliente || {nombre: ''};
+      h += '<div class="item" onclick="verFactura(\'' + f.id + '\')"><div><b>' + esc(f.numero) + '</b><br><small>' +
+           esc(c.nombre || '(sin cliente)') + ' · ' + fechaES(f.fecha) + '</small></div><div class="num">' + eur(desglose(f.total).total) + '</div></div>';
+    });
+    h += '</div>';
+  }
+  $('v-facturas').innerHTML = h;
+}
+function verFactura(id){ VID = id; ir('ver'); }
+function buscar(id){ return D.facturas.filter(function(x){ return x.id === id; })[0]; }
+
+/* ---------- plantilla de factura (formulario) ---------- */
+function vacia(){
+  return {id:null, numero:siguienteNumero(new Date().getFullYear()), fecha:hoyISO(),
+          nombre:'', nif:'', dir:'', desde:'', hasta:'', detalle:'', total:'', pagada:false};
+}
+function nuevaFactura(){ F = vacia(); ir('form'); }
+function aForm(f, conId){
+  return {id: conId ? f.id : null, numero: conId ? f.numero : siguienteNumero(new Date().getFullYear()),
+          fecha: conId ? f.fecha : hoyISO(),
+          nombre: (f.cliente && f.cliente.nombre) || '', nif: (f.cliente && f.cliente.nif) || '', dir: (f.cliente && f.cliente.dir) || '',
+          desde: f.desde || '', hasta: f.hasta || '', detalle: f.detalle || '',
+          total: String(f.total).replace('.', ','), pagada: conId ? !!f.pagada : false};
+}
+function editar(){ var f = buscar(VID); if (!f) return; F = aForm(f, true); ir('form'); }
+function duplicar(){ var f = buscar(VID); if (!f) return; F = aForm(f, false); ir('form'); }
+
+function rForm(){
+  var h = '<div class="card"><div class="fila"><div><label>Nº de factura</label><input value="' + esc(F.numero) + '" oninput="F.numero=this.value"></div>' +
+    '<div><label>Fecha</label><input type="date" value="' + esc(F.fecha) + '" onchange="F.fecha=this.value"></div></div></div>' +
+    '<div class="card"><b>Datos del cliente</b>';
+  if (D.clientes.length) {
+    h += '<label>Elegir cliente guardado</label><select onchange="elegirCliente(this.value)"><option value="">— Escribir uno nuevo —</option>';
+    D.clientes.forEach(function(c){ h += '<option value="' + c.id + '">' + esc(c.nombre) + '</option>'; });
+    h += '</select>';
+  }
+  h += '<label>Nombre o razón social</label><input id="f-nombre" value="' + esc(F.nombre) + '" oninput="F.nombre=this.value">' +
+    '<label>NIF / CIF</label><input id="f-nif" value="' + esc(F.nif) + '" oninput="F.nif=this.value">' +
+    '<label>Dirección</label><textarea id="f-dir" oninput="F.dir=this.value">' + esc(F.dir) + '</textarea></div>' +
+    '<div class="card"><b>Servicio de taxi realizado</b>' +
+    '<label>Desde</label><input value="' + esc(F.desde) + '" oninput="F.desde=this.value">' +
+    '<label>Hasta</label><input value="' + esc(F.hasta) + '" oninput="F.hasta=this.value">' +
+    '<label>Detalle del servicio (opcional)</label><textarea oninput="F.detalle=this.value">' + esc(F.detalle) + '</textarea></div>' +
+    '<div class="card"><label>Total con IVA incluido (€)</label><input inputmode="decimal" placeholder="0,00" value="' + esc(F.total) + '" oninput="F.total=this.value;pTot()">' +
+    '<div class="tot" id="tot"></div></div>' +
+    '<div class="card"><label class="chk"><input type="checkbox"' + (F.pagada ? ' checked' : '') + ' onchange="F.pagada=this.checked"> Marcar como PAGADA (sello)</label></div>' +
+    '<button class="prim" onclick="guardarFactura()">Guardar factura</button>';
+  $('v-form').innerHTML = h;
+  pTot();
+}
+function elegirCliente(id){
+  var c = D.clientes.filter(function(x){ return x.id === id; })[0];
+  if (!c) return;
+  F.nombre = c.nombre; F.nif = c.nif || ''; F.dir = c.dir || '';
+  $('f-nombre').value = F.nombre; $('f-nif').value = F.nif; $('f-dir').value = F.dir;
+}
+function pTot(){
+  var t = desglose(F.total);
+  $('tot').innerHTML = '<div><span>Base imponible</span><span>' + eur(t.base) + '</span></div>' +
+    '<div><span>IVA (' + IVA + ' %)</span><span>' + eur(t.iva) + '</span></div>' +
+    '<div class="g"><span>TOTAL (IVA incluido)</span><span>' + eur(t.total) + '</span></div>';
+}
+function guardarFactura(){
+  if (!F.fecha) F.fecha = hoyISO();
+  var numero = F.numero.trim();
+  if (!numero) { alert('Pon el número de factura'); return; }
+  if (!F.nombre.trim()) { alert('Pon el nombre del cliente'); return; }
+  if (!(num(F.total) > 0)) { alert('Pon el total con IVA incluido'); return; }
+  if (D.facturas.some(function(x){ return x.numero === numero && x.id !== F.id; })) { alert('Ya existe una factura con ese número'); return; }
+  if (!D.emisor.nombre.trim() && !confirm('No has rellenado tus datos (pestaña «Mis datos»). ¿Guardar igualmente?')) return;
+  var cli = {nombre: F.nombre.trim(), nif: F.nif.trim(), dir: F.dir.trim()};
+  /* guarda el cliente automáticamente para la próxima vez */
+  var ex = D.clientes.filter(function(c){ return c.nombre.trim().toLowerCase() === cli.nombre.toLowerCase(); })[0];
+  if (ex) { ex.nif = cli.nif; ex.dir = cli.dir; }
+  else D.clientes.push({id: uid(), nombre: cli.nombre, nif: cli.nif, dir: cli.dir, email: '', tel: ''});
+  var f = {id: F.id || uid(), numero: numero, fecha: F.fecha, cliente: cli, emisor: copia(D.emisor), pie: D.pie,
+           desde: F.desde, hasta: F.hasta, detalle: F.detalle, total: Math.round(num(F.total) * 100) / 100, pagada: !!F.pagada};
+  var idx = -1;
+  D.facturas.forEach(function(x, i){ if (x.id === f.id) idx = i; });
+  if (idx >= 0) D.facturas[idx] = f; else D.facturas.push(f);
+  guardar();
+  VID = f.id;
+  pila = ['facturas', 'ver'];
+  pintar();
+  window.scrollTo(0, 0);
+}
+
+/* ---------- factura terminada ---------- */
+function rVer(){
+  var f = buscar(VID);
+  if (!f) { raiz('facturas'); return; }
+  var c = f.cliente || {nombre:''}, e = f.emisor || D.emisor, t = desglose(f.total);
+  var h = '<div class="noprint"><button class="prim" onclick="imprimir()">Guardar PDF / Imprimir</button>' +
+    '<button class="sec" style="width:100%;margin-bottom:8px" onclick="togglePagada()">' + (f.pagada ? 'Quitar sello PAGADO' : 'Poner sello PAGADO') + '</button>' +
+    '<div class="fila" style="margin-bottom:12px"><button class="sec" onclick="editar()">Editar</button>' +
+    '<button class="sec" onclick="duplicar()">Duplicar</button>' +
+    '<button class="sec peligro" onclick="borrar()">Borrar</button></div>' +
+    (e.nombre ? '' : '<p class="aviso">Esta factura no lleva tus datos. Rellénalos en «Mis datos», luego pulsa Editar y Guardar.</p>') +
+    '<p class="nota">En la ventana de impresión elige «Guardar como PDF» para poder enviarla.</p></div>';
+  h += '<div id="hoja"><div class="hcab"><div><div class="hn">' + esc(e.nombre) + '</div>' +
+    (e.nif ? 'NIF: ' + esc(e.nif) + '<br>' : '') +
+    (e.dir ? nl(e.dir) + '<br>' : '') +
+    (e.email ? esc(e.email) + '<br>' : '') + (e.tel ? 'Tel. ' + esc(e.tel) : '') + '</div>' +
+    '<div class="hr"><div class="hf">FACTURA</div><div>Nº <b>' + esc(f.numero) + '</b></div><div>Fecha: ' + fechaES(f.fecha) + '</div></div></div>' +
+    '<div class="hcli"><small>DATOS DEL CLIENTE</small><br><b>' + esc(c.nombre) + '</b><br>' +
+    (c.nif ? 'NIF: ' + esc(c.nif) + '<br>' : '') + (c.dir ? nl(c.dir) : '') + '</div>' +
+    '<table><thead><tr><th>Concepto</th><th class="d">Importe</th></tr></thead><tbody><tr><td><b>' + esc(servicioTexto(f)) + '</b>' +
+    (f.detalle && f.detalle.trim() ? '<br>' + nl(f.detalle) : '') + '</td><td class="d">' + eur(t.base) + '</td></tr></tbody></table>' +
+    '<div class="htot"><div><span>Base imponible</span><span>' + eur(t.base) + '</span></div>' +
+    '<div><span>IVA (' + IVA + ' %)</span><span>' + eur(t.iva) + '</span></div>' +
+    '<div class="g"><span>TOTAL (IVA incluido)</span><span>' + eur(t.total) + '</span></div></div>';
+  if (f.pie && String(f.pie).trim()) h += '<div class="hpie">' + esc(f.pie) + '</div>';
+  if (f.pagada) h += '<div class="selloBox"><div class="sello">PAGADO</div></div>';
+  h += '</div>';
+  $('v-ver').innerHTML = h;
+}
+function imprimir(){
+  var f = buscar(VID);
+  var nombre = 'Factura ' + (f ? f.numero : '');
+  if (window.Android && window.Android.imprimir) window.Android.imprimir(nombre); else window.print();
+}
+function borrar(){
+  if (!confirm('¿Borrar esta factura?')) return;
+  D.facturas = D.facturas.filter(function(x){ return x.id !== VID; });
+  guardar();
+  raiz('facturas');
+}
+
+/* ---------- clientes guardados ---------- */
+function rClientes(){
+  var h = '<button class="prim" onclick="nuevoCliente()">+ Nuevo cliente</button>';
+  if (!D.clientes.length) h += '<div class="vacio">Aún no tienes clientes. Se guardan solos al hacer una factura.</div>';
+  else {
+    h += '<div class="card">';
+    D.clientes.forEach(function(c){
+      h += '<div class="item" onclick="editarCliente(\'' + c.id + '\')"><div><b>' + esc(c.nombre) + '</b><br><small>' + esc(c.nif || '') + '</small></div><div class="num">&#8250;</div></div>';
+    });
+    h += '</div>';
+  }
+  $('v-clientes').innerHTML = h;
+}
+function nuevoCliente(){ CF = {id:null, nombre:'', nif:'', dir:''}; ir('cliente'); }
+function editarCliente(id){
+  var c = D.clientes.filter(function(x){ return x.id === id; })[0];
+  if (!c) return;
+  CF = copia(c); ir('cliente');
+}
+function rCliente(){
+  var h = '<div class="card"><label>Nombre o razón social</label><input value="' + esc(CF.nombre) + '" oninput="CF.nombre=this.value">' +
+    '<label>NIF / CIF</label><input value="' + esc(CF.nif) + '" oninput="CF.nif=this.value">' +
+    '<label>Dirección</label><textarea oninput="CF.dir=this.value">' + esc(CF.dir) + '</textarea></div>' +
+    '<button class="prim" onclick="guardarCliente()">Guardar cliente</button>';
+  if (CF.id) h += '<button class="sec peligro" style="width:100%" onclick="borrarCliente()">Borrar cliente</button>' +
+    '<p class="nota">Las facturas ya hechas conservan los datos que tenía este cliente.</p>';
+  $('v-cliente').innerHTML = h;
+}
+function guardarCliente(){
+  if (!CF.nombre.trim()) { alert('Pon el nombre del cliente'); return; }
+  var c = {id: CF.id || uid(), nombre: CF.nombre.trim(), nif: CF.nif, dir: CF.dir, email: '', tel: ''};
+  var idx = -1;
+  D.clientes.forEach(function(x, i){ if (x.id === c.id) idx = i; });
+  if (idx >= 0) D.clientes[idx] = c; else D.clientes.push(c);
+  guardar();
+  atras();
+}
+function borrarCliente(){
+  if (!confirm('¿Borrar este cliente?')) return;
+  D.clientes = D.clientes.filter(function(x){ return x.id !== CF.id; });
+  guardar();
+  atras();
+}
+
+/* ---------- mis datos ---------- */
+function rAjustes(){
+  var e = D.emisor;
+  var h = '<div class="card"><b>Tus datos (salen en todas las facturas)</b>' +
+    '<label>Nombre o razón social</label><input value="' + esc(e.nombre) + '" oninput="D.emisor.nombre=this.value;guardar()">' +
+    '<label>NIF</label><input value="' + esc(e.nif) + '" oninput="D.emisor.nif=this.value;guardar()">' +
+    '<label>Dirección</label><textarea oninput="D.emisor.dir=this.value;guardar()">' + esc(e.dir) + '</textarea>' +
+    '<label>Email</label><input type="email" value="' + esc(e.email) + '" oninput="D.emisor.email=this.value;guardar()">' +
+    '<label>Teléfono</label><input type="tel" value="' + esc(e.tel) + '" oninput="D.emisor.tel=this.value;guardar()">' +
+    '<label>Texto al pie de la factura (licencia, forma de pago, IBAN…)</label>' +
+    '<textarea oninput="D.pie=this.value;guardar()">' + esc(D.pie) + '</textarea>' +
+    '<p class="nota">Todo se guarda solo en este móvil. El IVA va fijo al ' + IVA + ' %.</p></div>' +
+    '<div class="card"><b>Copia de seguridad</b><p class="nota">Si desinstalas la app o cambias de móvil se pierden los datos. Copia aquí la copia y pégala en una nota.</p>' +
+    '<button class="sec" style="width:100%;margin-top:8px" onclick="copiarCopia()">Copiar copia de seguridad</button>' +
+    '<label>Restaurar: pega aquí la copia</label><textarea id="rest"></textarea>' +
+    '<button class="sec" style="width:100%;margin-top:8px" onclick="restaurar()">Restaurar</button></div>';
+  $('v-ajustes').innerHTML = h;
+}
+function copiarCopia(){
+  var t = JSON.stringify(D);
+  if (window.Android && window.Android.copiar) window.Android.copiar(t);
+  else if (navigator.clipboard) navigator.clipboard.writeText(t);
+}
+function restaurar(){
+  var t = $('rest').value.trim();
+  if (!t) return;
+  try {
+    var d = JSON.parse(t);
+    if (!d || !d.facturas || !d.clientes) throw new Error('x');
+    if (!confirm('Esto reemplaza los datos actuales. ¿Continuar?')) return;
+    D = d; guardar(); raiz('facturas');
+  } catch(e) { alert('El texto no es una copia válida'); }
+}
+
+function togglePagada(){
+  var f = buscar(VID);
+  if (!f) return;
+  f.pagada = !f.pagada;
+  guardar();
+  rVer();
+}
+
+/* ---------- activación ---------- */
+function grupos(c){ return String(c).replace(/(.{4})/g, '$1 ').trim(); }
+function vistaActivar(){
+  var vs = document.querySelectorAll('.vista');
+  for (var i = 0; i < vs.length; i++) vs[i].style.display = 'none';
+  $('nav').style.display = 'none';
+  $('btnAtras').style.display = 'none';
+  $('titulo').textContent = 'Factura 53';
+  $('v-activar').style.display = 'block';
+  var cod = window.Android.codigo();
+  $('v-activar').innerHTML = '<div class="card"><b>Activar la app</b>' +
+    '<p class="nota">Esta app necesita una clave de activación. Envía este código a quien te la ha dado y te dará tu clave.</p>' +
+    '<div class="codigo">' + grupos(cod) + '</div>' +
+    '<button class="sec" style="width:100%" onclick="Android.copiarCodigo()">Copiar mi código</button>' +
+    '<label>Clave de activación</label><input id="clave" autocapitalize="characters" placeholder="XXXX-XXXX-XXXX-XXXX">' +
+    '<button class="prim" style="margin-top:12px" onclick="activar()">Activar</button></div>';
+}
+function activar(){
+  var c = $('clave').value;
+  if (window.Android.activar(c)) pintar();
+  else alert('La clave no es correcta para este móvil');
+}
+
+pintar();
+if ('serviceWorker' in navigator) { window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); }); }
+</script>
+</body>
+</html>
